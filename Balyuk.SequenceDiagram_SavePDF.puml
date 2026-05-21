@@ -1,0 +1,23 @@
+@startuml
+title Save slides to PDF
+
+hide footbox
+
+participant VideoPdfConverter
+participant SlideSelector
+participant PdfCreator
+participant "PDF file" as PdfFile
+
+VideoPdfConverter -> SlideSelector: find_slides(video_path)
+SlideSelector --> VideoPdfConverter: slides
+
+alt slides found
+    VideoPdfConverter -> PdfCreator: save(slides, output_path)
+    PdfCreator -> PdfFile: create result.pdf
+    PdfFile --> PdfCreator: saved
+    PdfCreator --> VideoPdfConverter: true
+else no slides
+    PdfCreator --> VideoPdfConverter: false
+end
+
+@enduml

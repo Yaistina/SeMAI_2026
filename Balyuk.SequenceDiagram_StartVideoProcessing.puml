@@ -1,0 +1,20 @@
+@startuml
+title Start video processing
+
+hide footbox
+
+actor User
+participant "REST API" as Api
+participant VideoPdfConverter
+participant SlideSelector
+participant VideoCapture
+
+User -> Api: GET /pdf
+Api -> VideoPdfConverter: convert(video_path, output_path)
+VideoPdfConverter -> SlideSelector: find_slides(video_path)
+SlideSelector -> VideoCapture: open(video_path)
+VideoCapture --> SlideSelector: video opened
+SlideSelector -> VideoCapture: read()
+VideoCapture --> SlideSelector: first frame
+
+@enduml

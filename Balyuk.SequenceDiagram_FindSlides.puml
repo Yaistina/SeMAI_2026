@@ -1,0 +1,32 @@
+@startuml
+title Find changed slides
+
+hide footbox
+
+participant SlideSelector
+participant VideoCapture
+participant "Frame tools" as FrameTools
+collections "Slides list" as Slides
+
+SlideSelector -> VideoCapture: read()
+VideoCapture --> SlideSelector: previousFrame
+SlideSelector -> FrameTools: crop(previousFrame)
+FrameTools --> SlideSelector: previousSlide
+SlideSelector -> Slides: add(firstSlide)
+
+loop while video has frames
+    SlideSelector -> VideoCapture: read()
+    VideoCapture --> SlideSelector: currentFrame
+    SlideSelector -> FrameTools: crop(currentFrame)
+    FrameTools --> SlideSelector: currentSlide
+    SlideSelector -> FrameTools: compare(previousSlide, currentSlide)
+    FrameTools --> SlideSelector: changed / not changed
+
+    alt slide changed
+        SlideSelector -> Slides: add(currentSlide)
+    end
+
+    SlideSelector -> SlideSelector: update previousFrame
+end
+
+@enduml

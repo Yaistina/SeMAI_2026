@@ -1,0 +1,54 @@
+@startuml class_diagram
+skinparam shadowing false
+
+package "video_pdf_service" {
+
+class VideoPdfConverter {
+- selector : SlideSelector
+- pdf_creator : PdfCreator
++ convert(video_path: str, output_path: str) : dict
+}
+
+class SlideSelector {
+- difference_limit : int
+- crop_area : tuple
++ find_slides(video_path: str) : list<Image>
+- _crop(frame) : Frame
+- _is_new_slide(previous_frame, current_frame) : bool
+- _to_image(frame) : Image
+}
+
+class PdfCreator {
++ save(images: list<Image>, output_path: str) : bool
+}
+
+class ApiServer {
++ index() : dict
++ get_pdf() : FileResponse
+}
+
+class Settings {
++ VIDEO_PATH : str
++ OUTPUT_PDF : str
++ CROP_AREA : tuple
++ DIFFERENCE_LIMIT : int
+}
+
+class VideoFile {
++ path : str
+}
+
+class PdfFile {
++ path : str
+}
+
+}
+
+ApiServer ..> VideoPdfConverter
+ApiServer ..> Settings
+VideoPdfConverter --> SlideSelector
+VideoPdfConverter --> PdfCreator
+SlideSelector ..> VideoFile
+PdfCreator ..> PdfFile
+
+@enduml
